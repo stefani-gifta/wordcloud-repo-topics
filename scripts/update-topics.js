@@ -35,12 +35,20 @@ async function fetchTopics() {
   return [...topicSet].sort();
 }
 
-function formatTopics(topics) {
-  const spans = topics
-    .map(t => `[\`${t}\`](https://github.com/topics/${t})`)
-    .join(' ');
+function makeBadge(topic) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="24">
+    <rect width="120" height="24" rx="12" fill="#ddf4ff"/>
+    <text x="60" y="16" font-family="sans-serif" font-size="12"
+      fill="#0969da" text-anchor="middle">${topic}</text>
+  </svg>`;
 
-  return `<!-- TOPICS_START -->\n${spans}\n<!-- TOPICS_END -->`;
+  const encoded = encodeURIComponent(svg);
+  return `<a href="https://github.com/topics/${topic}"><img src="data:image/svg+xml,${encoded}" alt="${topic}"></a>`;
+}
+
+function formatTopics(topics) {
+  const badges = topics.map(makeBadge).join('\n');
+  return `<!-- TOPICS_START -->\n${badges}\n<!-- TOPICS_END -->`;
 }
 
 (async () => {
