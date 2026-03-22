@@ -124,6 +124,4 @@ ${texts.join('\n')}
 
     const svg = makeWordCloud(topicCount);
     fs.writeFileSync('topics.svg', svg);
-    
-    console.log(`Updated ${topics.length} topics.`);
 })();
