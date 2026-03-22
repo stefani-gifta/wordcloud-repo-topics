@@ -121,7 +121,12 @@ ${texts.join('\n')}
 
 (async () => {
     const topicCount = await fetchTopics();
+    console.log('Topics found:', JSON.stringify(topicCount, null, 2));
 
     const svg = makeWordCloud(topicCount);
-    fs.writeFileSync('topics.svg', svg);
+    console.log('SVG length:', svg.length);
+
+    const outPath = path.join(__dirname, '..', 'topics.svg');
+    fs.writeFileSync(outPath, svg);
+    console.log('Written to:', outPath);
 })();
