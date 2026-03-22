@@ -37,7 +37,7 @@ async function fetchTopics() {
 
 function formatTopics(topics) {
   const spans = topics
-    .map(t => "[`${t}`](https://github.com/topics/${t})")
+    .map(t => `[\`${t}\`](https://github.com/topics/${t})`)
     .join(' ');
 
   return `<!-- TOPICS_START -->\n${spans}\n<!-- TOPICS_END -->`;
