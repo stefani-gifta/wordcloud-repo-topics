@@ -35,22 +35,22 @@ async function fetchTopics() {
   return [...topicSet].sort();
 }
 
-function buildBadgesHTML(topics) {
-  const badges = topics
-    .map(t => `<img alt="${t}" src="https://img.shields.io/badge/-${encodeURIComponent(t)}-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">`)
-    .join('\n');
+function formatTopics(topics) {
+  const spans = topics
+    .map(t => "[`${t}`](https://github.com/topics/${t})")
+    .join(' ');
 
-  return `<!-- TOPICS_START -->\n${badges}\n<!-- TOPICS_END -->`;
+  return `<!-- TOPICS_START -->\n${spans}\n<!-- TOPICS_END -->`;
 }
 
 (async () => {
   const topics = await fetchTopics();
-  const badgeBlock = buildBadgesHTML(topics);
+  const topicsList = formatTopics(topics);
 
   let readme = fs.readFileSync('README.md', 'utf8');
   readme = readme.replace(
     /<!-- TOPICS_START -->[\s\S]*?<!-- TOPICS_END -->/,
-    badgeBlock
+    topicsList
   );
   fs.writeFileSync('README.md', readme);
   console.log(`Updated ${topics.length} topics.`);
