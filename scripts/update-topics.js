@@ -35,7 +35,7 @@ async function fetchTopics() {
   return [...topicSet].sort();
 }
 
-function buildBadgesHTML(topics) {
+function formatTopics(topics) {
   const spans = topics
     .map(t => "[`${t}`](https://github.com/topics/${t})")
     .join(' ');
@@ -45,12 +45,12 @@ function buildBadgesHTML(topics) {
 
 (async () => {
   const topics = await fetchTopics();
-  const badgeBlock = buildBadgesHTML(topics);
+  const topicsList = formatTopics(topics);
 
   let readme = fs.readFileSync('README.md', 'utf8');
   readme = readme.replace(
     /<!-- TOPICS_START -->[\s\S]*?<!-- TOPICS_END -->/,
-    badgeBlock
+    topicsList
   );
   fs.writeFileSync('README.md', readme);
   console.log(`Updated ${topics.length} topics.`);
