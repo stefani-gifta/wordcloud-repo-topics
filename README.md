@@ -1,4 +1,30 @@
 ## Topics I work with
 
 <!-- TOPICS_START -->
+<img alt="ai-terms-simplification" src="https://img.shields.io/badge/-ai-terms-simplification-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="animated-writing" src="https://img.shields.io/badge/-animated-writing-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="chatbot" src="https://img.shields.io/badge/-chatbot-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="computer-vision" src="https://img.shields.io/badge/-computer-vision-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="cross-platform" src="https://img.shields.io/badge/-cross-platform-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="cross-plattform" src="https://img.shields.io/badge/-cross-plattform-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="data-mining" src="https://img.shields.io/badge/-data-mining-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="excel-generator" src="https://img.shields.io/badge/-excel-generator-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="exchange-student" src="https://img.shields.io/badge/-exchange-student-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="flan-t5" src="https://img.shields.io/badge/-flan-t5-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="indobertweet" src="https://img.shields.io/badge/-indobertweet-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="java-cli" src="https://img.shields.io/badge/-java-cli-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="java-game-development" src="https://img.shields.io/badge/-java-game-development-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="jeju-language" src="https://img.shields.io/badge/-jeju-language-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="job-prediction" src="https://img.shields.io/badge/-job-prediction-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="lightgbm" src="https://img.shields.io/badge/-lightgbm-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="mobilenetv2" src="https://img.shields.io/badge/-mobilenetv2-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="multi-label-classification" src="https://img.shields.io/badge/-multi-label-classification-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="natural-language-processing" src="https://img.shields.io/badge/-natural-language-processing-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="object-oriented-programming" src="https://img.shields.io/badge/-object-oriented-programming-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="project-management" src="https://img.shields.io/badge/-project-management-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="resume-parsing" src="https://img.shields.io/badge/-resume-parsing-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="sentiment-analysis" src="https://img.shields.io/badge/-sentiment-analysis-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="software-engineering" src="https://img.shields.io/badge/-software-engineering-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="transfer-learning" src="https://img.shields.io/badge/-transfer-learning-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
+<img alt="web-development" src="https://img.shields.io/badge/-web-development-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">
 <!-- TOPICS_END -->
