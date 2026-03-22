@@ -36,11 +36,11 @@ async function fetchTopics() {
 }
 
 function buildBadgesHTML(topics) {
-  const badges = topics
-    .map(t => `<img alt="${t}" src="https://img.shields.io/badge/-${encodeURIComponent(t)}-0075ca?style=flat-square&labelColor=0075ca&color=0075ca&logoColor=white">`)
-    .join('\n');
+  const spans = topics
+    .map(t => "[`${t}`](https://github.com/topics/${t})")
+    .join(' ');
 
-  return `<!-- TOPICS_START -->\n${badges}\n<!-- TOPICS_END -->`;
+  return `<!-- TOPICS_START -->\n${spans}\n<!-- TOPICS_END -->`;
 }
 
 (async () => {
