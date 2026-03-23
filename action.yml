@@ -38,5 +38,3 @@ inputs:
 runs:
   using: node20
   main: scripts/update-topics.js
-  env:
-    WORDCLOUD_TOKEN: ${{ inputs.token }}
