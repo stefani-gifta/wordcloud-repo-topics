@@ -34,6 +34,14 @@ inputs:
     description: Commit message when pushing the SVG
     required: false
     default: 'Add repository topics'
+  commit_user_name:
+    description: Commit author name
+    required: false
+    default: 'github-actions[bot]'
+  commit_user_email:
+    description: Commit author email
+    required: false
+    default: 'github-actions[bot]@users.noreply.github.com'
 
 runs:
   using: node20
