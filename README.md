@@ -85,7 +85,7 @@ const W = 680, H = 400;  // canvas size in pixels
 ```js
 function fontSize(count) {
   const t = (count - minCount) / (maxCount - minCount);
-  return Math.round(12 + t * 8);  // min 12px, max 20px
+  return Math.round(14 + t * 6);  // min 14px, max 20px
 }
 ```
 
