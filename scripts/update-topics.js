@@ -37,7 +37,7 @@ async function fetchTopics() {
     }
 
     const { data } = json;
-    
+
     const topicCount = {};
     for (const repo of data.viewer.repositories.nodes) {
         for (const { topic } of repo.repositoryTopics.nodes) {
@@ -130,13 +130,30 @@ function makeWordCloud(topicCount) {
         }
     }
 
+    function hexToRgb(hex) {
+        const n = parseInt(hex, 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
+    function makeShades(hex) {
+        const [r, g, b] = hexToRgb(hex);
+        return [
+            `rgb(${r}, ${g}, ${b})`,           // w1 - full color
+            `rgb(${r}, ${g}, ${b}, 0.75)`,     // w2 - 75%
+            `rgb(${r}, ${g}, ${b}, 0.5)`,      // w3 - 50%
+            `rgb(${r}, ${g}, ${b}, 0.3)`,      // w4 - 30%
+        ];
+    }
+
+    const [c1, c2, c3, c4] = makeShades(BASE_COLOR);
+
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <style>
 text { font-family: sans-serif; font-weight: 500; }
-.w1 { fill: #${BASE_COLOR}; }
-.w2 { fill: #1a8fe0; }
-.w3 { fill: #57a8e8; }
-.w4 { fill: #8ec4f0; }
+.w1 { fill: ${c1}; }
+.w2 { fill: ${c2}; }
+.w3 { fill: ${c3}; }
+.w4 { fill: ${c4}; }
 </style>
 ${texts.join('\n')}
 </svg>`;
