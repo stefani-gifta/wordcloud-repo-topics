@@ -40,3 +40,7 @@ runs:
   main: scripts/update-topics.js
   # env:
   #   WORDCLOUD_TOKEN: ${{ inputs.token }}
+
+branding:
+  icon: cloud
+  color: blue
