@@ -21,7 +21,7 @@ inputs:
   svg_height:
     description: SVG height in pixels
     required: false
-    default: '400'
+    default: '250'
   color:
     description: Base color for the words
     required: false
