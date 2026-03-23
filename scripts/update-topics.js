@@ -54,16 +54,16 @@ function makeWordCloud(topicCount) {
     }
 
     function estimateWidth(word, size) {
-        return word.length * size * 0.8;
+        return word.length * size * 0.5;
     }
 
     function overlaps(x, y, w, h) {
         for (const p of placed) {
             if (
-                x < p.x + p.w + 8 &&
-                x + w + 8 > p.x &&
-                y < p.y + p.h + 4 &&
-                y + h + 4 > p.y
+                x < p.x + p.w + 4 &&
+                x + w + 4 > p.x &&
+                y < p.y + p.h + 2 &&
+                y + h + 2 > p.y
             ) return true;
         }
         return false;
@@ -73,8 +73,8 @@ function makeWordCloud(topicCount) {
         const w = estimateWidth(word, size);
         const h = size;
         // spiral outward from center
-        for (let r = 0; r < 300; r += 3) {
-            for (let angle = 0; angle < Math.PI * 2; angle += 0.3) {
+        for (let r = 0; r < 400; r += 3) {
+            for (let angle = 0; angle < Math.PI * 2; angle += 0.15) {
                 const cx = W / 2 - w / 2 + Math.cos(angle) * r;
                 const cy = H / 2 + Math.sin(angle) * r;
                 const x = Math.max(10, Math.min(W - w - 10, cx));
@@ -105,6 +105,8 @@ function makeWordCloud(topicCount) {
                 `<text class="${colorClass(count)}" x="${pos.x}" y="${pos.y}" ` +
                 `font-size="${pos.size}" text-anchor="middle">${word}</text>`
             );
+        } else {
+            console.warn('Could not place:', word);
         }
     }
 
