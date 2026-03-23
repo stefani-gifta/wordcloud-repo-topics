@@ -8,24 +8,27 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Generate word cloud
+        uses: stefani-gifta/wordcloud-repo-topics@main
         with:
-          node-version: '20'
-
-      - name: Fetch topics and update README
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GH_USERNAME: ${{ github.repository_owner }}
-        run: node scripts/update-topics.js
+          token: ${{ secrets.WORDCLOUD_TOKEN }}
+          canvas_width: '680'
+          canvas_height: '400'
+          min_font_size: '14'
+          max_font_size: '20'
+          color: '0075ca'
+          output_file: 'topics.svg'
 
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add README.md topics.svg
-          git diff --staged --quiet || git commit -m "Add repository topics"
+          git add topics.svg
+          git diff --staged --quiet || git commit -m "chore: update topic word cloud"
           git push
