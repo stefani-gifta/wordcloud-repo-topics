@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('Token present:', !!process.env.WORDCLOUD_TOKEN);
+console.log('Token present:', !!process.env.INPUT_TOKEN);
 
 const QUERY = `
 query($first: Int!) {
@@ -20,7 +20,7 @@ async function fetchTopics() {
     const res = await fetch('https://api.github.com/graphql', {
         method: 'POST',
         headers: {
-            Authorization: `bearer ${process.env.WORDCLOUD_TOKEN}`,
+            Authorization: `bearer ${process.env.INPUT_TOKEN}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ query: QUERY, variables: { first: 100 } }),
