@@ -2,7 +2,7 @@
   
   # Word Cloud Generator for Repository Topics
 
-  A GitHub Action that reads all (public and private) your repository topics via the GitHub GraphQL API and generates a word cloud SVG.
+  A GitHub Action that reads all your [public and private] repository topics via the GitHub GraphQL API and generates a word cloud SVG.
   
   ![Topics](topics.svg)
 
