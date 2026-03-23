@@ -37,7 +37,7 @@ async function fetchTopics() {
 }
 
 function makeWordCloud(topicCount) {
-    const W = 680, H = 400;
+    const W = 600, H = 200;
     const placed = [];
 
     // sort by count descending
@@ -54,7 +54,7 @@ function makeWordCloud(topicCount) {
     }
 
     function estimateWidth(word, size) {
-        return word.length * size * 0.6;
+        return word.length * size * 0.8;
     }
 
     function overlaps(x, y, w, h) {
