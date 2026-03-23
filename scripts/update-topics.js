@@ -36,8 +36,14 @@ async function fetchTopics() {
     return topicCount; // { "javascript": 3, "python": 1, ... }
 }
 
+const W = parseInt(process.env.INPUT_SVG_WIDTH || '680');
+const H = parseInt(process.env.INPUT_SVG_HEIGHT || '400');
+const MIN_FONT = parseInt(process.env.INPUT_MIN_FONT_SIZE || '12');
+const MAX_FONT = parseInt(process.env.INPUT_MAX_FONT_SIZE || '28');
+const BASE_COLOR = process.env.INPUT_COLOR || '0075ca';
+const OUT_FILE = process.env.INPUT_OUTPUT_FILE || 'topics.svg';
+
 function makeWordCloud(topicCount) {
-    const W = 600, H = 200;
     const placed = [];
 
     // sort by count descending
@@ -50,7 +56,7 @@ function makeWordCloud(topicCount) {
     function fontSize(count) {
         if (maxCount === minCount) return 22;
         const t = (count - minCount) / (maxCount - minCount);
-        return Math.round(14 + t * 6); // size range in pixel
+        return Math.round(MIN_FONT + t * MAX_FONT); // size range in pixel
     }
 
     function estimateWidth(word, size) {
@@ -113,7 +119,7 @@ function makeWordCloud(topicCount) {
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <style>
 text { font-family: sans-serif; font-weight: 500; }
-.w1 { fill: #0075ca; }
+.w1 { fill: #${BASE_COLOR}; }
 .w2 { fill: #1a8fe0; }
 .w3 { fill: #57a8e8; }
 .w4 { fill: #8ec4f0; }
@@ -127,9 +133,6 @@ ${texts.join('\n')}
     console.log('Topics found:', JSON.stringify(topicCount, null, 2));
 
     const svg = makeWordCloud(topicCount);
-    console.log('SVG length:', svg.length);
-
-    const outPath = path.join(__dirname, '..', 'topics.svg');
+    const outPath = path.join(__dirname, '..', OUT_FILE);
     fs.writeFileSync(outPath, svg);
-    console.log('Written to:', outPath);
 })();
