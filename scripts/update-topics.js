@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 
@@ -53,6 +55,7 @@ const MIN_FONT = parseInt(process.env.INPUT_MIN_FONT_SIZE || '12');
 const MAX_FONT = parseInt(process.env.INPUT_MAX_FONT_SIZE || '28');
 const BASE_COLOR = process.env.INPUT_COLOR || '0075ca';
 const OUT_FILE = process.env.INPUT_OUTPUT_FILE || 'topics.svg';
+const DRY_RUN = process.env.DRY_RUN === 'true';
 
 function makeWordCloud(topicCount) {
     const placed = [];
@@ -144,7 +147,10 @@ ${texts.join('\n')}
     console.log('Topics found:', JSON.stringify(topicCount, null, 2));
 
     const svg = makeWordCloud(topicCount);
-    const outPath = path.join(process.env.GITHUB_WORKSPACE, OUT_FILE);
+
+    const WORKSPACE = process.env.GITHUB_WORKSPACE || path.join(__dirname, '..');
+    const outPath = path.join(WORKSPACE, OUT_FILE);
+    
     fs.writeFileSync(outPath, svg);
 
     const { execSync } = require('child_process');
@@ -154,16 +160,20 @@ ${texts.join('\n')}
     const name = process.env.INPUT_COMMIT_USER_NAME || 'github-actions[bot]';
     const email = process.env.INPUT_COMMIT_USER_EMAIL || 'github-actions[bot]@users.noreply.github.com';
 
-    execSync(`git config user.name "${name}"`, { cwd });
-    execSync(`git config user.email "${email}"`, { cwd });
-    execSync(`git add ${outPath}`, { cwd });
+    if (DRY_RUN) {
+        console.log('Dry run, skipping git commit.');
+    } else {
+        execSync(`git config user.name "${name}"`, { cwd });
+        execSync(`git config user.email "${email}"`, { cwd });
+        execSync(`git add ${outPath}`, { cwd });
 
-    try {
-        execSync('git diff --staged --quiet', { cwd });
-        console.log('No changes to commit.');
-    } catch {
-        execSync(`git commit -m "${msg}"`, { cwd });
-        execSync('git push', { cwd });
-        console.log('Committed and pushed.');
+        try {
+            execSync('git diff --staged --quiet', { cwd });
+            console.log('No changes to commit.');
+        } catch {
+            execSync(`git commit -m "${msg}"`, { cwd });
+            execSync('git push', { cwd });
+            console.log('Committed and pushed.');
+        }
     }
 })();
