@@ -30,6 +30,10 @@ inputs:
     description: File name of the resulting SVG
     required: false
     default: 'topics.svg'
+  commit_msg:
+    description: Commit message when pushing the SVG
+    required: false
+    default: 'Add repository topics'
 
 runs:
   using: node20
