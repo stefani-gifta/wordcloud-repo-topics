@@ -18,9 +18,3 @@ jobs:
         uses: stefani-gifta/wordcloud-repo-topics@main
         with:
           token: ${{ secrets.WORDCLOUD_TOKEN }}
-          svg_width: '680'
-          svg_height: '400'
-          min_font_size: '14'
-          max_font_size: '20'
-          color: '0075ca'
-          output_file: 'topics.svg'
