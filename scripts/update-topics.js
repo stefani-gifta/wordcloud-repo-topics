@@ -138,15 +138,21 @@ ${texts.join('\n')}
 
     const { execSync } = require('child_process');
 
+    const cwd = process.env.GITHUB_WORKSPACE;
     const msg = process.env.INPUT_COMMIT_MSG || 'Add topic word cloud';
-    execSync(`git add ${outPath}`, { cwd: process.env.GITHUB_WORKSPACE });
+    const name = process.env.INPUT_COMMIT_USER_NAME || 'github-actions[bot]';
+    const email = process.env.INPUT_COMMIT_USER_EMAIL || 'github-actions[bot]@users.noreply.github.com';
+
+    execSync(`git config user.name "${name}"`, { cwd });
+    execSync(`git config user.email "${email}"`, { cwd });
+    execSync(`git add ${outPath}`, { cwd });
 
     try {
-        execSync('git diff --staged --quiet', { cwd: process.env.GITHUB_WORKSPACE });
+        execSync('git diff --staged --quiet', { cwd });
         console.log('No changes to commit.');
     } catch {
-        execSync(`git commit -m "${msg}"`, { cwd: process.env.GITHUB_WORKSPACE });
-        execSync('git push', { cwd: process.env.GITHUB_WORKSPACE });
+        execSync(`git commit -m "${msg}"`, { cwd });
+        execSync('git push', { cwd });
         console.log('Committed and pushed.');
     }
 })();
