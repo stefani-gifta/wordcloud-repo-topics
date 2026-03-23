@@ -1,4 +1,4 @@
-name: Wordcloud repo topics
+name: Word cloud repo topics
 description: Generates a word cloud SVG from your repository topics
 author: stefani-gifta
 
