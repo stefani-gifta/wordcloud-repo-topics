@@ -50,7 +50,7 @@ function makeWordCloud(topicCount) {
     function fontSize(count) {
         if (maxCount === minCount) return 22;
         const t = (count - minCount) / (maxCount - minCount);
-        return Math.round(12 + t * 16); // size range in pixel
+        return Math.round(12 + t * 8); // size range in pixel
     }
 
     function estimateWidth(word, size) {
