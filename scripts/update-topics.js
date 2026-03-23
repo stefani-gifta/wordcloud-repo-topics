@@ -133,20 +133,20 @@ ${texts.join('\n')}
     console.log('Topics found:', JSON.stringify(topicCount, null, 2));
 
     const svg = makeWordCloud(topicCount);
-    const outPath = path.join(__dirname, '..', OUT_FILE);
+    const outPath = path.join(process.env.GITHUB_WORKSPACE, OUT_FILE);
     fs.writeFileSync(outPath, svg);
 
     const { execSync } = require('child_process');
 
     const msg = process.env.INPUT_COMMIT_MSG || 'Add topic word cloud';
-    execSync(`git add ${outPath}`);
+    execSync(`git add ${outPath}`, { cwd: process.env.GITHUB_WORKSPACE });
 
     try {
-        execSync('git diff --staged --quiet');
+        execSync('git diff --staged --quiet', { cwd: process.env.GITHUB_WORKSPACE });
         console.log('No changes to commit.');
     } catch {
-        execSync(`git commit -m "${msg}"`);
-        execSync('git push');
+        execSync(`git commit -m "${msg}"`, { cwd: process.env.GITHUB_WORKSPACE });
+        execSync('git push', { cwd: process.env.GITHUB_WORKSPACE });
         console.log('Committed and pushed.');
     }
 })();
