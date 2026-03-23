@@ -2,7 +2,7 @@ name: Add repository topics
 
 on:
   schedule:
-    - cron: '0 0 * * 0'   # every Sunday
+    - cron: '0 0 * * *'   # auto run at 00:00 daily
   workflow_dispatch:
 
 jobs:
