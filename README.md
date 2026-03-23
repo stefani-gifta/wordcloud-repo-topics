@@ -98,7 +98,7 @@ In `update-topics.yml`, add any of these to the `with:` block in your workflow f
 | `max_font_size` | Largest word size in pixels | `20` |
 | `color` | Base hex color for the cloud | `0075ca` |
 | `output_file` | Output SVG filename | `topics.svg` |
-| `commit_message` | Commit message | `Add topic word cloud` |
+| `commit_msg` | Commit message | `Add topic word cloud` |
 
 Example with customization:
 
@@ -112,7 +112,7 @@ Example with customization:
           min_font_size: '12'
           max_font_size: '28'
           color: '663399'
-          commit_message: '💜 update word cloud'
+          commit_msg: '💜 update word cloud'
 ```
 
 ---

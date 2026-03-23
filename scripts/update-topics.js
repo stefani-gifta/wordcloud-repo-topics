@@ -18,7 +18,7 @@ async function fetchTopics() {
     const res = await fetch('https://api.github.com/graphql', {
         method: 'POST',
         headers: {
-            Authorization: `bearer ${process.env.GH_TOKEN}`,
+            Authorization: `bearer ${process.env.WORDCLOUD_TOKEN}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ query: QUERY, variables: { first: 100 } }),
@@ -138,7 +138,7 @@ ${texts.join('\n')}
 
     const { execSync } = require('child_process');
 
-    const msg = process.env.INPUT_COMMIT_MSG || 'Add repository topics';
+    const msg = process.env.INPUT_COMMIT_MSG || 'Add topic word cloud';
     execSync(`git add ${OUT_FILE}`);
 
     try {
