@@ -139,7 +139,7 @@ ${texts.join('\n')}
     const { execSync } = require('child_process');
 
     const msg = process.env.INPUT_COMMIT_MSG || 'Add topic word cloud';
-    execSync(`git add ${OUT_FILE}`);
+    execSync(`git add ${outPath}`);
 
     try {
         execSync('git diff --staged --quiet');
