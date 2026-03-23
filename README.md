@@ -28,7 +28,7 @@
 The action needs a personal access token to query the GraphQL API.
 
 > [!NOTE]
-> If you only use this on a public profile repo, you can use the built-in `GITHUB_TOKEN` instead and skip the lengthy steps below. Simply replace `${{ secrets.GH_TOKEN }}` with `${{ secrets.GITHUB_TOKEN }}` in the workflow file.
+> If you only use this on a public profile repo, you can use the built-in `GITHUB_TOKEN` instead and skip the lengthy steps below. Simply replace `${{ secrets.WORDCLOUD_TOKEN }}` with `${{ secrets.GITHUB_TOKEN }}` in the workflow file.
 
 1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)**
 2. Click **Generate new token (classic)**
@@ -40,18 +40,33 @@ Then add it to the repo where the word cloud will be added:
 
 1. Go to the repo's **Settings → Secrets and variables → Actions**
 2. Click **New repository secret**
-3. Name it something like `GH_TOKEN` and paste the generated token as the value
+3. Name it `WORDCLOUD_TOKEN` and paste the generated token as the value
 
 ### 2. Add files to the repo
 
-Copy the workflow and script files into the repo:
+Create `.github/workflows/update-topics.yml` in the repo:
 
 ```
-.github/
-  workflows/
-    update-topics.yml
-scripts/
-  update-topics.js
+name: Add topic word cloud
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate word cloud
+        uses: stefani-gifta/wordcloud-repo-topics@main
+        with:
+          token: ${{ secrets.WORDCLOUD_TOKEN }}
 ```
 
 ### 3. Add the SVG to the README
@@ -66,32 +81,39 @@ It will embed the generated SVG.
 
 ### 4. Run it
 
-Go to the repo's **Actions → Update README topics → Run workflow** to trigger it manually the first time. After that it runs every Sunday at midnight UTC.
+Go to the repo's **Actions → Add topic word cloud → Run workflow** to trigger it manually the first time. After that it runs every day at midnight UTC.
 
 ---
 
 ## Customization
 
-In `scripts/update-topics.js`, adjust these as you like:
+In `update-topics.yml`, add any of these to the `with:` block in your workflow file:
 
-### SVG size
+| Input | Description | Default |
+|---|---|---|
+| `token` | GitHub token | required |
+| `svg_width` | SVG width in pixels | `680` |
+| `svg_height` | SVG height in pixels | `400` |
+| `min_font_size` | Smallest word size in pixels | `14` |
+| `max_font_size` | Largest word size in pixels | `20` |
+| `color` | Base hex color for the cloud | `0075ca` |
+| `output_file` | Output SVG filename | `topics.svg` |
+| `commit_message` | Commit message | `Add topic word cloud` |
 
-```js
-const W = 680, H = 400;  // canvas size in pixels
+Example with customization:
+
+```yaml
+      - name: Generate word cloud
+        uses: stefani-gifta/wordcloud-repo-topics@main
+        with:
+          token: ${{ secrets.WORDCLOUD_TOKEN }}
+          svg_width: '600'
+          svg_height: '300'
+          min_font_size: '12'
+          max_font_size: '28'
+          color: '663399'
+          commit_message: '💜 update word cloud'
 ```
-
-### Font size
-
-```js
-function fontSize(count) {
-  const t = (count - minCount) / (maxCount - minCount);
-  return Math.round(14 + t * 6);  // min 14px, max 20px
-}
-```
-
-### Font colors
-
-Change the colors by editing the `.w1`–`.w4` CSS classes in the SVG `<style>` block inside `makeWordCloud()`. The current palette uses shades of GitHub's topic blue (`#0075ca`).
 
 ---
 
