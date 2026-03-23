@@ -18,13 +18,24 @@ async function fetchTopics() {
     const res = await fetch('https://api.github.com/graphql', {
         method: 'POST',
         headers: {
-            Authorization: `bearer ${process.env.INPUT_TOKEN}`,
+            Authorization: `Bearer ${process.env.INPUT_TOKEN}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ query: QUERY, variables: { first: 100 } }),
     });
 
-    const { data } = await res.json();
+    const json = await res.json();
+    if (json.errors) {
+        console.error('GraphQL errors:', JSON.stringify(json.errors, null, 2));
+        process.exit(1);
+    }
+    if (!json.data) {
+        console.error('Unexpected response:', JSON.stringify(json, null, 2));
+        process.exit(1);
+    }
+
+    const { data } = json;
+    
     const topicCount = {};
     for (const repo of data.viewer.repositories.nodes) {
         for (const { topic } of repo.repositoryTopics.nodes) {
