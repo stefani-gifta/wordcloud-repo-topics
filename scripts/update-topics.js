@@ -51,8 +51,8 @@ async function fetchTopics() {
 
 const W = parseInt(process.env.INPUT_SVG_WIDTH || '680');
 const H = parseInt(process.env.INPUT_SVG_HEIGHT || '400');
-const MIN_FONT = parseInt(process.env.INPUT_MIN_FONT_SIZE || '12');
-const MAX_FONT = parseInt(process.env.INPUT_MAX_FONT_SIZE || '28');
+const MIN_FONT = parseInt(process.env.INPUT_MIN_FONT_SIZE || '14');
+const MAX_FONT = parseInt(process.env.INPUT_MAX_FONT_SIZE || '20');
 const BASE_COLOR = process.env.INPUT_COLOR || '0075ca';
 const OUT_FILE = process.env.INPUT_OUTPUT_FILE || 'topics.svg';
 const DRY_RUN = process.env.DRY_RUN === 'true';
@@ -150,7 +150,7 @@ ${texts.join('\n')}
 
     const WORKSPACE = process.env.GITHUB_WORKSPACE || path.join(__dirname, '..');
     const outPath = path.join(WORKSPACE, OUT_FILE);
-    
+
     fs.writeFileSync(outPath, svg);
 
     const { execSync } = require('child_process');
