@@ -25,6 +25,8 @@ async function fetchTopics() {
     });
 
     const { data } = await res.json();
+    console.log('API status:', res.status);
+    console.log('API response:', JSON.stringify(json, null, 2));
     const topicCount = {};
     for (const repo of data.viewer.repositories.nodes) {
         for (const { topic } of repo.repositoryTopics.nodes) {
