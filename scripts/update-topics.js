@@ -135,4 +135,18 @@ ${texts.join('\n')}
     const svg = makeWordCloud(topicCount);
     const outPath = path.join(__dirname, '..', OUT_FILE);
     fs.writeFileSync(outPath, svg);
+
+    const { execSync } = require('child_process');
+
+    const msg = process.env.INPUT_COMMIT_MSG || 'Add repository topics';
+    execSync(`git add ${OUT_FILE}`);
+
+    try {
+        execSync('git diff --staged --quiet');
+        console.log('No changes to commit.');
+    } catch {
+        execSync(`git commit -m "${msg}"`);
+        execSync('git push');
+        console.log('Committed and pushed.');
+    }
 })();
