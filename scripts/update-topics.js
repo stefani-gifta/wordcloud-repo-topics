@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+console.log('Token present:', !!process.env.WORDCLOUD_TOKEN);
+
 const QUERY = `
 query($first: Int!) {
   viewer {
@@ -24,9 +26,14 @@ async function fetchTopics() {
         body: JSON.stringify({ query: QUERY, variables: { first: 100 } }),
     });
 
-    const { data } = await res.json();
+    const json = await res.json();
     console.log('API status:', res.status);
     console.log('API response:', JSON.stringify(json, null, 2));
+
+    if (!json.data) process.exit(1);
+
+    const { data } = json;
+
     const topicCount = {};
     for (const repo of data.viewer.repositories.nodes) {
         for (const { topic } of repo.repositoryTopics.nodes) {
