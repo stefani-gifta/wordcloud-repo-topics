@@ -1,0 +1,36 @@
+name: Wordcloud repo topics
+description: Generates a word cloud SVG from your repository topics
+author: stefani-gifta
+
+inputs:
+  token:
+    description: GitHub token
+    required: true
+  min_font_size:
+    description: Smallest font size in pixels
+    required: false
+    default: '14'
+  max_font_size:
+    description: Largest font size in pixels
+    required: false
+    default: '20'
+  svg_width:
+    description: SVG width in pixels
+    required: false
+    default: '680'
+  svg_height:
+    description: SVG height in pixels
+    required: false
+    default: '400'
+  color:
+    description: Base color for the words
+    required: false
+    default: '0075ca'
+  output_file:
+    description: File name of the resulting SVG
+    required: false
+    default: 'topics.svg'
+
+runs:
+  using: node20
+  main: scripts/update-topics.js
