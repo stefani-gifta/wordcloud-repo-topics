@@ -2,7 +2,7 @@ name: Add topic word cloud
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 1 1 *' # runs at 00:00, on day 1 of the month, only in Jan (yearly)  
   workflow_dispatch:
 
 jobs:
