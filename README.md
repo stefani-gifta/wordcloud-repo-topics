@@ -15,9 +15,10 @@
 ## How it works
 
 1. A GitHub Action queries the GitHub GraphQL API to get all repository topics
-2. Each topic appearance is counted. The more it's used, the bigger its size in the word cloud.
+2. Each topic appearance is counted. The more a topic appears, the bigger its size and the darker its color in the word cloud.
 3. A Node.js script places each topic into the world cloud using a spiral algorithm.
-4. The resulting SVG is pushed into the repository with the file name `topics.svg`.
+4. If there are any unplaced topics due to insufficient pixels, the word cloud will be recreated using a loop until all topics are placed.
+5. The resulting SVG is pushed into the repository with the file name `topics.svg` (file name is customizable).
 
 ---
 
@@ -93,7 +94,7 @@ In `update-topics.yml`, add any of these to the `with:` block in your workflow f
 |---|---|---|
 | `token` | GitHub token | required |
 | `svg_width` | SVG width in pixels | `680` |
-| `svg_height` | SVG height in pixels | `400` |
+| `svg_height` | SVG height in pixels | `250` |
 | `min_font_size` | Smallest word size in pixels | `14` |
 | `max_font_size` | Largest word size in pixels | `20` |
 | `color` | Base hex color for the cloud | `0075ca` |
