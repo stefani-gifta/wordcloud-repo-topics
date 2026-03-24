@@ -1,6 +1,8 @@
-require('dotenv').config();
-
 const fs = require('fs');
+if (fs.existsSync('.env')) {
+    require('dotenv').config();
+}
+
 const path = require('path');
 
 const QUERY = `
