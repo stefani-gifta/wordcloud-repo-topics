@@ -50,14 +50,14 @@ async function fetchTopics() {
 }
 
 const W = parseInt(process.env.INPUT_SVG_WIDTH || '680');
-const H = parseInt(process.env.INPUT_SVG_HEIGHT || '400');
+const baseH = parseInt(process.env.INPUT_SVG_HEIGHT || '250');
 const MIN_FONT = parseInt(process.env.INPUT_MIN_FONT_SIZE || '14');
 const MAX_FONT = parseInt(process.env.INPUT_MAX_FONT_SIZE || '20');
 const BASE_COLOR = process.env.INPUT_COLOR || '0075ca';
 const OUT_FILE = process.env.INPUT_OUTPUT_FILE || 'topics.svg';
 const DRY_RUN = process.env.DRY_RUN === 'true';
 
-function makeWordCloud(topicCount) {
+function makeWordCloud(topicCount, H) {
     const placed = [];
 
     // sort by count descending
@@ -68,9 +68,9 @@ function makeWordCloud(topicCount) {
     const minCount = words[words.length - 1][1];
 
     function fontSize(count) {
-        if (maxCount === minCount) return 22;
+        if (maxCount === minCount) return MAX_FONT; // only 1 topic
         const t = (count - minCount) / (maxCount - minCount);
-        return Math.round(MIN_FONT + t * MAX_FONT); // size range in pixel
+        return Math.round(MIN_FONT + t * (MAX_FONT - MIN_FONT)); // size range in pixel
     }
 
     function estimateWidth(word, size) {
@@ -93,7 +93,7 @@ function makeWordCloud(topicCount) {
         const w = estimateWidth(word, size);
         const h = size;
         // spiral outward from center
-        for (let r = 0; r < 400; r += 3) {
+        for (let r = 0; r < 400; r += 1.5) {
             for (let angle = 0; angle < Math.PI * 2; angle += 0.15) {
                 const cx = W / 2 - w / 2 + Math.cos(angle) * r;
                 const cy = H / 2 + Math.sin(angle) * r;
@@ -117,8 +117,9 @@ function makeWordCloud(topicCount) {
     }
 
     const texts = [];
+    const unplaced = [];
     for (const [word, count] of words) {
-        const size = fontSize(count);
+        const size = fontSize(count); // adjust size based on word count
         const pos = tryPlace(word, size);
         if (pos) {
             texts.push(
@@ -126,6 +127,7 @@ function makeWordCloud(topicCount) {
                 `font-size="${pos.size}" text-anchor="middle">${word}</text>`
             );
         } else {
+            unplaced.push(word);
             console.warn('Could not place:', word);
         }
     }
@@ -147,7 +149,7 @@ function makeWordCloud(topicCount) {
 
     const [c1, c2, c3, c4] = makeShades(BASE_COLOR);
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <style>
 text { font-family: sans-serif; font-weight: 500; }
 .w1 { fill: ${c1}; }
@@ -156,19 +158,29 @@ text { font-family: sans-serif; font-weight: 500; }
 .w4 { fill: ${c4}; }
 </style>
 ${texts.join('\n')}
-</svg>`;
+</svg>`, unplaced };
 }
 
 (async () => {
     const topicCount = await fetchTopics();
     console.log('Topics found:', JSON.stringify(topicCount, null, 2));
 
-    const svg = makeWordCloud(topicCount);
+    const topicCount_entries = Object.keys(topicCount).length;
+    let H = Math.max(baseH, topicCount_entries * MIN_FONT / 2); // either take input or adjust accordingly
+    console.log('Setting H as:', H);
+
+    const result = makeWordCloud(topicCount, H);
+
+    while (result.unplaced.length > 0) {
+        H += 50;  // grow vertically
+        console.log(`Retrying with height ${H}, ${result.unplaced.length} words unplaced...`);
+        result = makeWordCloud(topicCount, H);
+    }
 
     const WORKSPACE = process.env.GITHUB_WORKSPACE || path.join(__dirname, '..');
     const outPath = path.join(WORKSPACE, OUT_FILE);
 
-    fs.writeFileSync(outPath, svg);
+    fs.writeFileSync(outPath, result.svg);
 
     const { execSync } = require('child_process');
 
