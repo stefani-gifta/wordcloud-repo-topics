@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 
@@ -18,13 +20,24 @@ async function fetchTopics() {
     const res = await fetch('https://api.github.com/graphql', {
         method: 'POST',
         headers: {
-            Authorization: `bearer ${process.env.INPUT_TOKEN}`,
+            Authorization: `Bearer ${process.env.INPUT_TOKEN}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ query: QUERY, variables: { first: 100 } }),
     });
 
-    const { data } = await res.json();
+    const json = await res.json();
+    if (json.errors) {
+        console.error('GraphQL errors:', JSON.stringify(json.errors, null, 2));
+        process.exit(1);
+    }
+    if (!json.data) {
+        console.error('Unexpected response:', JSON.stringify(json, null, 2));
+        process.exit(1);
+    }
+
+    const { data } = json;
+
     const topicCount = {};
     for (const repo of data.viewer.repositories.nodes) {
         for (const { topic } of repo.repositoryTopics.nodes) {
@@ -37,13 +50,14 @@ async function fetchTopics() {
 }
 
 const W = parseInt(process.env.INPUT_SVG_WIDTH || '680');
-const H = parseInt(process.env.INPUT_SVG_HEIGHT || '400');
-const MIN_FONT = parseInt(process.env.INPUT_MIN_FONT_SIZE || '12');
-const MAX_FONT = parseInt(process.env.INPUT_MAX_FONT_SIZE || '28');
+const baseH = parseInt(process.env.INPUT_SVG_HEIGHT || '250');
+const MIN_FONT = parseInt(process.env.INPUT_MIN_FONT_SIZE || '14');
+const MAX_FONT = parseInt(process.env.INPUT_MAX_FONT_SIZE || '20');
 const BASE_COLOR = process.env.INPUT_COLOR || '0075ca';
 const OUT_FILE = process.env.INPUT_OUTPUT_FILE || 'topics.svg';
+const DRY_RUN = process.env.DRY_RUN === 'true';
 
-function makeWordCloud(topicCount) {
+function makeWordCloud(topicCount, H) {
     const placed = [];
 
     // sort by count descending
@@ -54,9 +68,9 @@ function makeWordCloud(topicCount) {
     const minCount = words[words.length - 1][1];
 
     function fontSize(count) {
-        if (maxCount === minCount) return 22;
+        if (maxCount === minCount) return MAX_FONT; // only 1 topic
         const t = (count - minCount) / (maxCount - minCount);
-        return Math.round(MIN_FONT + t * MAX_FONT); // size range in pixel
+        return Math.round(MIN_FONT + t * (MAX_FONT - MIN_FONT)); // size range in pixel
     }
 
     function estimateWidth(word, size) {
@@ -80,9 +94,9 @@ function makeWordCloud(topicCount) {
         const h = size;
         // spiral outward from center
         for (let r = 0; r < 400; r += 3) {
-            for (let angle = 0; angle < Math.PI * 2; angle += 0.15) {
-                const cx = W / 2 - w / 2 + Math.cos(angle) * r;
-                const cy = H / 2 + Math.sin(angle) * r;
+            for (let angle = 0; angle < Math.PI * 2; angle += 0.05) {
+                const cx = W / 2 - w / 2 + Math.cos(angle) * r * 3;
+                const cy = H / 2 + Math.sin(angle) * r * 1.25;
                 const x = Math.max(10, Math.min(W - w - 10, cx));
                 const y = Math.max(size, Math.min(H - 10, cy));
                 if (!overlaps(x, y, w, h)) {
@@ -103,8 +117,9 @@ function makeWordCloud(topicCount) {
     }
 
     const texts = [];
+    const unplaced = [];
     for (const [word, count] of words) {
-        const size = fontSize(count);
+        const size = fontSize(count); // adjust size based on word count
         const pos = tryPlace(word, size);
         if (pos) {
             texts.push(
@@ -112,29 +127,60 @@ function makeWordCloud(topicCount) {
                 `font-size="${pos.size}" text-anchor="middle">${word}</text>`
             );
         } else {
+            unplaced.push(word);
             console.warn('Could not place:', word);
         }
     }
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    function hexToRgb(hex) {
+        const n = parseInt(hex, 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
+    function makeShades(hex) {
+        const [r, g, b] = hexToRgb(hex);
+        return [
+            `rgb(${r}, ${g}, ${b})`,           // w1 - full color
+            `rgb(${r}, ${g}, ${b}, 0.75)`,     // w2 - 75%
+            `rgb(${r}, ${g}, ${b}, 0.5)`,      // w3 - 50%
+            `rgb(${r}, ${g}, ${b}, 0.3)`,      // w4 - 30%
+        ];
+    }
+
+    const [c1, c2, c3, c4] = makeShades(BASE_COLOR);
+
+    return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <style>
 text { font-family: sans-serif; font-weight: 500; }
-.w1 { fill: #${BASE_COLOR}; }
-.w2 { fill: #1a8fe0; }
-.w3 { fill: #57a8e8; }
-.w4 { fill: #8ec4f0; }
+.w1 { fill: ${c1}; }
+.w2 { fill: ${c2}; }
+.w3 { fill: ${c3}; }
+.w4 { fill: ${c4}; }
 </style>
 ${texts.join('\n')}
-</svg>`;
+</svg>`, unplaced };
 }
 
 (async () => {
     const topicCount = await fetchTopics();
     console.log('Topics found:', JSON.stringify(topicCount, null, 2));
 
-    const svg = makeWordCloud(topicCount);
-    const outPath = path.join(process.env.GITHUB_WORKSPACE, OUT_FILE);
-    fs.writeFileSync(outPath, svg);
+    const topicCount_entries = Object.keys(topicCount).length;
+    let H = Math.max(baseH, topicCount_entries * MIN_FONT / 2); // either take input or adjust accordingly
+    console.log('Setting H as:', H);
+
+    const result = makeWordCloud(topicCount, H);
+
+    while (result.unplaced.length > 0) {
+        H += 50;  // grow vertically
+        console.log(`Retrying with height ${H}, ${result.unplaced.length} words unplaced...`);
+        result = makeWordCloud(topicCount, H);
+    }
+
+    const WORKSPACE = process.env.GITHUB_WORKSPACE || path.join(__dirname, '..');
+    const outPath = path.join(WORKSPACE, OUT_FILE);
+
+    fs.writeFileSync(outPath, result.svg);
 
     const { execSync } = require('child_process');
 
@@ -143,16 +189,20 @@ ${texts.join('\n')}
     const name = process.env.INPUT_COMMIT_USER_NAME || 'github-actions[bot]';
     const email = process.env.INPUT_COMMIT_USER_EMAIL || 'github-actions[bot]@users.noreply.github.com';
 
-    execSync(`git config user.name "${name}"`, { cwd });
-    execSync(`git config user.email "${email}"`, { cwd });
-    execSync(`git add ${outPath}`, { cwd });
+    if (DRY_RUN) {
+        console.log('Dry run, skipping git commit.');
+    } else {
+        execSync(`git config user.name "${name}"`, { cwd });
+        execSync(`git config user.email "${email}"`, { cwd });
+        execSync(`git add ${outPath}`, { cwd });
 
-    try {
-        execSync('git diff --staged --quiet', { cwd });
-        console.log('No changes to commit.');
-    } catch {
-        execSync(`git commit -m "${msg}"`, { cwd });
-        execSync('git push', { cwd });
-        console.log('Committed and pushed.');
+        try {
+            execSync('git diff --staged --quiet', { cwd });
+            console.log('No changes to commit.');
+        } catch {
+            execSync(`git commit -m "${msg}"`, { cwd });
+            execSync('git push', { cwd });
+            console.log('Committed and pushed.');
+        }
     }
 })();
