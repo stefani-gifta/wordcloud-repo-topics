@@ -93,10 +93,10 @@ function makeWordCloud(topicCount, H) {
         const w = estimateWidth(word, size);
         const h = size;
         // spiral outward from center
-        for (let r = 0; r < 400; r += 1.5) {
-            for (let angle = 0; angle < Math.PI * 2; angle += 0.15) {
-                const cx = W / 2 - w / 2 + Math.cos(angle) * r;
-                const cy = H / 2 + Math.sin(angle) * r;
+        for (let r = 0; r < 400; r += 3) {
+            for (let angle = 0; angle < Math.PI * 2; angle += 0.05) {
+                const cx = W / 2 - w / 2 + Math.cos(angle) * r * 3;
+                const cy = H / 2 + Math.sin(angle) * r * 1.25;
                 const x = Math.max(10, Math.min(W - w - 10, cx));
                 const y = Math.max(size, Math.min(H - 10, cy));
                 if (!overlaps(x, y, w, h)) {
